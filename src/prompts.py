@@ -22,21 +22,28 @@ OPS_ANALYSIS_PROMPT = ChatPromptTemplate.from_messages([
 PLANNER_PROMPT = ChatPromptTemplate.from_messages([
     ("system",
      "You are PlannerAgent. Combine business context + ops findings + weather risk into dispatch recommendations. "
-     "Prioritize SLA, safety, and cost."),
+     "Prioritize SLA, safety, and cost. "
+     "CRITICAL: You are running a 'What-If' Simulation. You must adapt your entire dispatch plan based on the injected 'What-If Scenario'."),
     ("user",
      "Business context:\n{business_context}\n\nOps insights:\n{ops_insights}\n\nWeather risk:\n{weather_risk}\n\n"
-     "Return:\n1) Dispatch plan for next 24-48h\n2) What to monitor\n3) Contingency triggers\n4) Expected KPI impacts\n")
+     "What-If Scenario:\n{what_if_scenario}\n\n"
+     "Return:\n"
+     "1) Simulated Impact of the What-If Scenario on KPIs\n"
+     "2) Dispatch plan for next 24-48h accounting for the disruption\n"
+     "3) Contingency-based recommendations\n"
+     "4) Resource allocation tradeoffs\n")
 ])
 
 REPORT_PROMPT = ChatPromptTemplate.from_messages([
     ("system",
      "You are ReportAgent. Produce a crisp HTML report for leadership. Use headings and bullets. "
-     "Keep it skimmable."),
+     "Keep it skimmable. Explicitly highlight the What-If scenario being simulated so executives understand the context."),
     ("user",
      "Inputs:\n\nBusiness context:\n{business_context}\n\n"
      "CSV KPIs:\n{kpis}\n\n"
      "Anomaly highlights:\n{anomaly_highlights}\n\n"
      "Weather risk:\n{weather_risk}\n\n"
+     "What-If Scenario Simulated:\n{what_if_scenario}\n\n"
      "Dispatch plan:\n{dispatch_plan}\n\n"
-     "Generate HTML report.")
+     "Generate HTML report. Make sure to include a dedicated section for 'Hypothetical Scenario Analysis'.")
 ])
