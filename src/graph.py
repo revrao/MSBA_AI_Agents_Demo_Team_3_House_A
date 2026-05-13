@@ -16,9 +16,9 @@ load_dotenv()
 class AppState(TypedDict, total=False):
     pdf_path: str
     csv_path: str
+    what_if_scenario: str # NEW: Field to hold the hypothetical disruption
 
     business_context: str
-
     csv_summary: Dict[str, Any]
     csv_kpis: Dict[str, Any]
     anomalies_md: str
@@ -72,21 +72,25 @@ def node_weather(state: AppState) -> AppState:
 
 
 def node_planner(state: AppState) -> AppState:
+    # NEW: Pass the what-if scenario to the planner
     plan = run_planner_agent(
         business_context=state.get("business_context", ""),
         ops_insights=state.get("ops_insights", ""),
         weather_risk=state.get("weather_risk", {}),
+        what_if_scenario=state.get("what_if_scenario", "No disruptions reported.")
     )
     return {"dispatch_plan": plan}
 
 
 def node_report(state: AppState) -> AppState:
+    # NEW: Pass the what-if scenario to the report agent for executive context
     html = run_report_agent(
         business_context=state.get("business_context", ""),
         kpis=state.get("csv_kpis", {}),
         anomaly_highlights=state.get("anomalies_md", "(none)"),
         weather_risk=state.get("weather_risk", {}),
         dispatch_plan=state.get("dispatch_plan", ""),
+        what_if_scenario=state.get("what_if_scenario", "No disruptions reported.")
     )
     return {"report_html": html}
 
