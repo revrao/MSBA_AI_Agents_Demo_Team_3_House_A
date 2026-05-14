@@ -22,5 +22,9 @@ if __name__ == "__main__":
     final = app.invoke(state)
 
     report_html = final.get("report_html", "")
+    with open("output_report.html", "w", encoding="utf-8") as f:
+        f.write(report_html)
+    print("Saved full HTML report to output_report.html")
+
     print("\n=== REPORT (first 2000 chars) ===\n")
     print(report_html[:2000])
