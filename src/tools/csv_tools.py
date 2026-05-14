@@ -49,14 +49,14 @@ def analyze_csv(csv_path: str) -> CsvAnalysisResult:
         # 1. Create a mapping dictionary based on Appendix A from the Playbook.
         # (NOTE: You must look at the actual Playbook MD file and fill in these exact values!)
         appendix_a_mapping = {
-            "LEGACY-ID-001": "STANDARD-ID-A",
-            "OLD-TEMP-VAC": "VAC-100",
-            "MISSING-999": "STANDARD-ID-B"
-            # Add all the rules from Appendix A here...
+            "10020": "RMD-100",
+            "20021": "RMD-200",
+            "1070": "ALB-INH",
+            "99999": "EXP-ONC-CT",
         }
         
         # 2. Apply the mapping to the dataframe to standardize the IDs
-        df["item_id"] = df["item_id"].replace(appendix_a_mapping)
+        df["canonical_item_id"] = df["item_id"].astype(str).replace(appendix_a_mapping)
         
         # Now your dataframe has clean data!
     # ---------------------------------------------------------
@@ -72,7 +72,7 @@ def analyze_csv(csv_path: str) -> CsvAnalysisResult:
         
         # Now that the IDs are clean, you can calculate the mix!
         if "item_id" in planning_df.columns:
-            item_mix = planning_df.groupby(["corridor_id", "item_id"]).size().unstack(fill_value=0).to_dict(orient="index")
+            item_mix = (planning_df.groupby(["corridor_id", "canonical_item_id"]).size().unstack(fill_value=0).to_dict(orient="index"))
             kpis["item_mix_by_corridor"] = item_mix
         
     numeric_cols = df.select_dtypes(include=[np.number]).columns.tolist()
