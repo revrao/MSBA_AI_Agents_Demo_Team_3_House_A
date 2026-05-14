@@ -1,3 +1,4 @@
+import pandas as pd
 from __future__ import annotations
 import os
 from typing import TypedDict, Dict, Any
@@ -29,6 +30,9 @@ class AppState(TypedDict, total=False):
 
     dispatch_plan: str
     report_html: str
+
+    resource_csv_path: str
+    resource_constraints: str # NEW: To hold the parsed constraints
 
 
 def node_pdf_context(state: AppState) -> AppState:
@@ -105,6 +109,15 @@ def node_email(state: AppState) -> AppState:
     send_email_smtp(subject=subject, html_body=state["report_html"], to_email=to_email)
     return {}
 
+def node_load_resources(state: AppState) -> AppState:
+    try:
+        df = pd.read_csv(state["resource_csv_path"])
+        # Convert the dataframe to a readable string format for the LLM
+        constraints = df.to_markdown(index=False) 
+    except Exception as e:
+        constraints = f"Error loading resources: {e}"
+    
+    return {"resource_constraints": constraints}
 
 
 def build_graph():
