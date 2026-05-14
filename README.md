@@ -213,6 +213,41 @@ The workflow produces:
 - Full HTML report (`output_report.html`)
 - Operational recommendations under simulated disruptions
 
+# End-to-End Execution Example
+
+## Step 1: Activate virtual environment
+
+```bash
+source .venv/bin/activate
+```
+
+## Step 2: Run the workflow
+
+```bash
+python src/main.py
+```
+
+## Step 3: Generated outputs
+
+The workflow will:
+- Analyze multi-corridor shipment data
+- Apply the hypothetical disruption scenario
+- Enforce resource constraints
+- Generate dispatch recommendations
+- Produce an executive HTML report
+
+The final report will be saved as:
+
+```text
+output_report.html
+```
+
+To open the report locally on Mac:
+
+```bash
+open output_report.html
+```
+
 # Key Technologies
 
 - Python
