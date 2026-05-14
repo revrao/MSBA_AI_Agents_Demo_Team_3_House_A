@@ -1,110 +1,225 @@
 # UCLA MSBA AI Agents Project Challenge 2026
 
-**Team [Your Team Name / House Name]** **Core Focus:** Enhancement 2 — The "What-If" Scenario Simulation
+## Team [Team Name]
 
-## 🚀 Project Overview
+### Enhancement 2: What-If Scenario Simulation
 
-This repository contains an advanced multi-agent system designed to manage operational and dispatch planning for SeeWeeS Specialty Distribution.
+# Project Overview
 
-We transformed the baseline linear reporting prototype into a **dynamic, constraint-aware simulation engine**. By extending the LangGraph architecture, our system now ingests multi-corridor shipment data, strictly adheres to daily resource limits, standardizes messy legacy data, and allows leadership to inject hypothetical supply chain disruptions (e.g., driver shortages, demand spikes) to instantly generate contingency-based dispatch plans.
+This repository contains a multi-agent operational planning system for SeeWeeS Specialty Distribution.
 
-## 🧠 Key Enhancements & Technical Methodology
+Starting from the baseline LangGraph dispatch-planning prototype, we enhanced the architecture into a constraint-aware "What-If" simulation engine capable of:
 
-* **"What-If" Scenario Injection:** The user can pass dynamic disruption scenarios into the `AppState`, which the `PlannerAgent` processes to dynamically recalculate KPIs and adjust the dispatch strategy.
-* **Resource Constraint Node (`node_load_resources`):** A new agentic step that parses `Resource_availability_48h.csv` to ensure the Planner strictly adheres to physical limitations (Drivers, Standard Trucks, Temp-Controlled Trucks).
-* **Data Standardization (Appendix A):** Upgraded `csv_tools.py` to automatically reconcile legacy item IDs and missing identifiers based on the SeeWeeS Playbook Appendix A before calculating KPIs.
-* **Multi-Corridor Analytics:** Re-engineered the ops data analysis to specifically slice the 48-hour planning window by `corridor_id` to evaluate workload mix and risk properly.
+- Simulating operational disruptions
+- Enforcing resource constraints
+- Analyzing multi-corridor shipment demand
+- Generating contingency dispatch plans
+- Producing executive-ready HTML reports
 
-## 🏗️ Multi-Agent Architecture
+Our enhancement focuses on operational stress testing under hypothetical disruptions such as:
+- Demand spikes
+- Driver shortages
+- Temperature-controlled truck failures
 
-Our LangGraph workflow operates as follows:
+# Core Enhancements
 
-1. **Context Agent (RAG):** Extracts SLAs, dispatch heuristics, and routing waypoints from the SeeWeeS Playbook.
-2. **Ops Data Agent:** Cleans the multi-corridor CSV feed, standardizes legacy IDs, isolates the 48h planning window, and identifies data anomalies via Isolation Forests.
-3. **Weather Tool:** Pulls live forecast data and calculates weather-related routing risks.
-4. **Resource Node (New):** Parses actual fleet and driver availability limits.
-5. **Planner Agent (Enhanced):** Integrates business rules, clean corridor demand, weather risks, rigid resource constraints, and **user-defined "What-If" scenarios** to output an optimized, heavily constrained dispatch strategy.
-6. **Report Agent:** Generates a skimmable HTML brief specifically highlighting the hypothetical scenario, tradeoffs made, and C-suite action items.
+## 1. What-If Scenario Simulation
 
-## 📂 Project Structure
+The workflow now accepts dynamic disruption scenarios injected into the application state.
+
+Example:
+
+```python
+scenario = "A 20% demand spike occurred in Corridor C2_NJ_PHL while 2 temp-controlled trucks failed on Day0."
+```
+
+The PlannerAgent dynamically adjusts dispatch recommendations based on the simulated disruption.
+
+## 2. Resource Constraint Integration
+
+A new LangGraph node (`node_load_resources`) loads operational resource limits from:
+
+```text
+Resource_availability_48h.csv
+```
+
+The PlannerAgent must now respect constraints for:
+- Drivers
+- Standard trucks
+- Temperature-controlled trucks
+
+## 3. Multi-Corridor Analytics
+
+The enhanced CSV pipeline:
+- Filters the 48-hour planning window
+- Groups shipments by `corridor_id`
+- Calculates corridor-level KPIs
+- Evaluates shipment mix and operational risk
+
+## 4. Appendix A Data Standardization
+
+The CSV analysis engine now standardizes legacy identifiers using the SeeWeeS Playbook Appendix A mapping rules.
+
+This includes:
+- Legacy item ID reconciliation
+- Canonical item mapping
+- Item-level normalization for analytics
+
+# Multi-Agent Workflow
+
+```text
+PDF Context Agent
+        ↓
+CSV Operations Analysis Agent
+        ↓
+Weather Risk Tool
+        ↓
+Resource Constraint Node
+        ↓
+Planner Agent
+        ↓
+Executive Report Agent
+```
+
+# Agent Responsibilities
+
+## Context Agent
+
+Extracts:
+- SLAs
+- Dispatch heuristics
+- Planning constraints
+- Weather policies
+
+from the operational playbook using RAG.
+
+## OpsDataAgent
+
+Processes shipment CSV data:
+- Cleans records
+- Standardizes item IDs
+- Calculates KPIs
+- Detects anomalies using Isolation Forest
+
+## Weather Tool
+
+Retrieves forecast data and derives:
+- Precipitation risk
+- Wind risk
+- Freezing risk
+
+for dispatch corridors.
+
+## Resource Node
+
+Loads daily operational limits:
+- Drivers
+- Standard trucks
+- Temperature-controlled trucks
+
+and passes constraints into planning.
+
+## PlannerAgent
+
+Combines:
+- Business rules
+- Shipment KPIs
+- Weather risk
+- Resource constraints
+- Hypothetical disruptions
+
+to generate dispatch recommendations and tradeoff decisions.
+
+## ReportAgent
+
+Produces a skimmable HTML executive report containing:
+- KPI impacts
+- Dispatch plans
+- SLA risks
+- Resource tradeoffs
+- Contingency recommendations
+
+# Project Structure
 
 ```text
 .
-├── data-for-enhancement/          # Student artifacts for the simulation
-│   ├── SeeWeeS Specialty Dispatch Playbook.md
+├── data-for-enhancement/
+│   ├── SeeWeeS Specialty Dispatch Playbook.pdf
 │   ├── Incoming_shipments_14d_multi_corridor.csv
 │   └── Resource_availability_48h.csv
-├── src/                           # Core application code
-│   ├── main.py                    # Graph execution & scenario injection
-│   ├── graph.py                   # LangGraph nodes and edges
-│   ├── agents.py                  # LLM wrappers and invocations
-│   ├── prompts.py                 # System and user prompts
-│   └── tools/                     # Utility scripts (csv, weather, email, pdf)
-├── chroma_db/                     # Local vector store (Generated dynamically)
-├── requirements.txt               # Dependencies
-├── .env.example                   # Template for environment variables
-└── README.md                      # Deployment guide
-
+│
+├── src/
+│   ├── main.py
+│   ├── graph.py
+│   ├── agents.py
+│   ├── prompts.py
+│   └── tools/
+│
+├── chroma_db/
+├── requirements.txt
+├── .env.example
+└── README.md
 ```
 
-## 🛠️ Setup & Deployment Guide
+# Setup Instructions
 
-### 1. Environment Setup
-
-We recommend using Python 3.11+. Clone the repository and set up your virtual environment:
+## 1. Create Virtual Environment
 
 ```bash
-# Create and activate virtual environment
 python3 -m venv .venv
-source .venv/bin/activate  # On Windows use: .venv\Scripts\activate
-
-# Install required dependencies
-pip install -r requirements.txt
-
+source .venv/bin/activate
 ```
 
-### 2. Configure API Keys
-
-You must provide an OpenAI API key to run the agents. LangSmith tracing is highly recommended for viewing the agent thought process.
+## 2. Install Dependencies
 
 ```bash
-# Copy the example environment file
-cp .env.example .env
-
+pip install -r requirements.txt
 ```
 
-Open `.env` and add your credentials:
+## 3. Configure Environment Variables
+
+Create a `.env` file:
 
 ```env
-OPENAI_API_KEY="sk-your-api-key"
-LANGCHAIN_TRACING_V2="true"
-LANGCHAIN_API_KEY="lsv2_your-langsmith-key"
-LANGCHAIN_PROJECT="SeeWeeS_Simulation"
-REPORT_EMAIL_TO="executive@yourcompany.com" # Optional
-
+OPENAI_API_KEY="your-api-key"
+LANGCHAIN_TRACING_V2=false
 ```
 
-### 3. Running a "What-If" Scenario
+## 4. Run the System
 
-To test the simulation, open `main.py` and modify the `scenario` variable in the execution block.
-
-```python
-# Inside main.py
-scenario = "A severe driver shortage occurred in Corridor A resulting in 30% fewer drivers. We also see a 15% demand spike for Temp-Controlled Vaccines."
-
-```
-
-Execute the system from the root directory:
+From the repository root:
 
 ```bash
 python src/main.py
-
 ```
 
-### 4. Viewing the Output
+# Example Scenario
 
-Upon completion, the application will:
+```python
+scenario = "A 20% demand spike occurred in Corridor C2_NJ_PHL while 2 temp-controlled trucks failed on Day0."
+```
 
-1. Print the generated executive report (HTML format) directly to the console.
-2. Email the report to the address specified in `REPORT_EMAIL_TO` (if SMTP is configured).
-3. If tracing is enabled, you can view the step-by-step LLM inputs/outputs at [smith.langchain.com](https://smith.langchain.com).
+The system generates:
+- KPI impact analysis
+- Dispatch recommendations
+- Corridor prioritization
+- Contingency planning
+- HTML executive reports
+
+# Output
+
+The workflow produces:
+- Terminal report preview
+- Full HTML report (`output_report.html`)
+- Operational recommendations under simulated disruptions
+
+# Key Technologies
+
+- Python
+- LangGraph
+- LangChain
+- OpenAI API
+- ChromaDB
+- Pandas
+- Scikit-learn
+- Open-Meteo API

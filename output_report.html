@@ -1,0 +1,158 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dispatch Planning Report - What-If Scenario Analysis</title>
+<style>
+  body { font-family: Arial, sans-serif; margin: 20px; color: #222; }
+  h1, h2, h3 { color: #004080; }
+  table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
+  th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+  th { background-color: #e6f0ff; }
+  .highlight { background-color: #ffefc1; }
+  ul { margin-top: 0; }
+  .note { font-style: italic; color: #555; }
+</style>
+</head>
+<body>
+
+<h1>Dispatch Planning Report</h1>
+
+<h2>1. Hypothetical Scenario Analysis</h2>
+<p><strong>Scenario:</strong> A 20% demand spike in Corridor B (C2_NJ_PHL) coincides with breakdown of 2 temperature-controlled trucks on Day0.</p>
+
+<h3>Key Impacts on KPIs</h3>
+<ul>
+  <li><strong>Shipment Volume:</strong> Corridor B volume increases from 15 to 18 shipments (20% spike). Corridor A remains at 18 shipments.</li>
+  <li><strong>Resource Constraints:</strong> Temp-controlled truck availability on Day0 drops from 2 to 0, severely limiting capacity for temperature-sensitive shipments.</li>
+  <li><strong>SLA Risk Flags:</strong> Elevated risk in Corridor B due to inability to fulfill temp-controlled shipments on Day0.</li>
+  <li><strong>Excluded Shipments:</strong> Potential increase in excluded shipments in Corridor B if temp-controlled shipments cannot be dispatched.</li>
+  <li><strong>Tier 1 / Tier 2 Mix:</strong> No direct change, but Tier 1 temp-controlled shipments in Corridor B are at risk of delay.</li>
+</ul>
+
+<h2>2. Dispatch Plan for Next 48 Hours (Day0 & Day1)</h2>
+
+<h3>Resource Summary</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Day</th>
+      <th>Drivers</th>
+      <th>Standard Trucks</th>
+      <th>Temp-Controlled Trucks</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Day0</td>
+      <td>6</td>
+      <td>4</td>
+      <td>0 (2 broken down)</td>
+    </tr>
+    <tr>
+      <td>Day1</td>
+      <td>6</td>
+      <td>4</td>
+      <td>2</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>Day0 Dispatch Plan</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Corridor</th>
+      <th>Drivers</th>
+      <th>Standard Trucks</th>
+      <th>Temp-Controlled Trucks</th>
+      <th>Shipments Dispatched</th>
+      <th>Notes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>C1_I95_NJ_BOS</td>
+      <td>3</td>
+      <td>3</td>
+      <td>0</td>
+      <td>~12 (standard only)</td>
+      <td class="highlight">Temp-controlled shipments deferred</td>
+    </tr>
+    <tr>
+      <td>C2_NJ_PHL</td>
+      <td>3</td>
+      <td>1</td>
+      <td>0</td>
+      <td>~8 (standard only)</td>
+      <td class="highlight">All temp-controlled shipments deferred</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>Day1 Dispatch Plan</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Corridor</th>
+      <th>Drivers</th>
+      <th>Standard Trucks</th>
+      <th>Temp-Controlled Trucks</th>
+      <th>Shipments Dispatched</th>
+      <th>Notes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>C1_I95_NJ_BOS</td>
+      <td>3</td>
+      <td>1</td>
+      <td>1</td>
+      <td>All deferred shipments</td>
+      <td>Temp-controlled prioritized</td>
+    </tr>
+    <tr>
+      <td>C2_NJ_PHL</td>
+      <td>3</td>
+      <td>2</td>
+      <td>1</td>
+      <td>All shipments including temp-controlled</td>
+      <td>Priority due to demand spike and SLA risk</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>3. Contingency-Based Recommendations</h2>
+<ul>
+  <li>Expedite repair or replacement of broken temp-controlled trucks to restore capacity ASAP.</li>
+  <li>Consider subcontracting temp-controlled transport for Corridor B to mitigate SLA risk.</li>
+  <li>Communicate proactively with Corridor B customers about potential Day0 delays for temp-controlled shipments.</li>
+  <li>Prioritize Tier 1 and temperature-sensitive shipments in dispatch planning.</li>
+  <li>Enhance data validation to reduce anomalies impacting dispatch accuracy.</li>
+  <li>Monitor weather risk continuously; current risk is minimal (risk score 0).</li>
+  <li>Prepare for driver overtime or shift adjustments if demand spike persists.</li>
+</ul>
+
+<h2>4. Resource Allocation Tradeoffs & Prioritization Rationale</h2>
+<ul>
+  <li>Temp-controlled trucks are the critical bottleneck; zero availability on Day0 forces deferral of all temp-controlled shipments.</li>
+  <li>Corridor B prioritized on Day1 for temp-controlled shipments due to 20% demand increase and higher SLA risk.</li>
+  <li>Corridor A focuses on dispatching standard shipments on Day0 to maximize throughput despite temp-controlled truck shortage.</li>
+  <li>Drivers allocated evenly to balance workload and maintain SLA adherence.</li>
+  <li>Standard trucks allocated proportionally based on shipment volume and corridor priority.</li>
+  <li>All invalid or anomalous shipment rows (e.g., missing unique_item_id, item mismatches) are excluded and logged with reason codes.</li>
+</ul>
+
+<h2>5. Additional Notes</h2>
+<ul>
+  <li>All excluded shipment rows are tracked separately with detailed reason codes for audit and investigation.</li>
+  <li>Weather risk summary for the 48-hour window indicates minimal risk: no heavy rain, high wind, or freezing risk detected.</li>
+  <li>Dispatch reports will include detailed weather risk and resource allocation rationale per corridor and day.</li>
+  <li>This plan strictly respects constraints and adapts to the simulated What-If scenario impact.</li>
+</ul>
+
+</body>
+</html>
+```
