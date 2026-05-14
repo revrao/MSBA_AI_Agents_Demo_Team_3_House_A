@@ -127,16 +127,16 @@ def build_graph():
     g.add_node("pdf_context", node_pdf_context)
     g.add_node("csv_analysis", node_csv_analysis)
     g.add_node("weather", node_weather)
+    g.add_node("resources", node_load_resources) # NEW NODE
     g.add_node("planner", node_planner)
     g.add_node("report", node_report)
-    g.add_node("email", node_email)
 
     g.set_entry_point("pdf_context")
     g.add_edge("pdf_context", "csv_analysis")
     g.add_edge("csv_analysis", "weather")
-    g.add_edge("weather", "planner")
+    g.add_edge("weather", "resources")           # NEW EDGE
+    g.add_edge("resources", "planner")           # NEW EDGE
     g.add_edge("planner", "report")
-    g.add_edge("report", "email")
-    g.add_edge("email", END)
+    g.add_edge("report", END)
 
     return g.compile()
