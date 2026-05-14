@@ -19,12 +19,19 @@ def run_ops_agent(summary: Dict[str, Any], kpis: Dict[str, Any], anomalies_md: s
         summary=summary, kpis=kpis, anomalies_md=anomalies_md
     )).content
 
-def run_planner_agent(business_context: str, ops_insights: str, weather_risk: Dict[str, Any], what_if_scenario: str) -> str:
+def run_planner_agent(
+    business_context: str, 
+    ops_insights: str, 
+    weather_risk: Dict[str, Any], 
+    what_if_scenario: str,
+    resource_constraints: str  # <--- NEW ARGUMENT
+) -> str:
     return llm.invoke(PLANNER_PROMPT.format_messages(
         business_context=business_context,
         ops_insights=ops_insights,
         weather_risk=weather_risk,
-        what_if_scenario=what_if_scenario # NEW
+        what_if_scenario=what_if_scenario,
+        resource_constraints=resource_constraints # <--- PASS TO PROMPT
     )).content
 
 def run_report_agent(
