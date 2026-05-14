@@ -41,6 +41,40 @@ def analyze_csv(csv_path: str) -> CsvAnalysisResult:
 
     # Generic KPI examples: you will tailor later once we see headers
     kpis: Dict[str, Any] = {}
+
+    # ---------------------------------------------------------
+    # NEW LOGIC: Reconcile Item IDs using Appendix A Rules
+    # ---------------------------------------------------------
+    if "item_id" in df.columns: # Or whichever column contains the messy IDs
+        # 1. Create a mapping dictionary based on Appendix A from the Playbook.
+        # (NOTE: You must look at the actual Playbook MD file and fill in these exact values!)
+        appendix_a_mapping = {
+            "LEGACY-ID-001": "STANDARD-ID-A",
+            "OLD-TEMP-VAC": "VAC-100",
+            "MISSING-999": "STANDARD-ID-B"
+            # Add all the rules from Appendix A here...
+        }
+        
+        # 2. Apply the mapping to the dataframe to standardize the IDs
+        df["item_id"] = df["item_id"].replace(appendix_a_mapping)
+        
+        # Now your dataframe has clean data!
+    # ---------------------------------------------------------
+
+    # ENHANCEMENT LOGIC: Multi-corridor KPIs
+    if "corridor_id" in df.columns and "is_planning_window" in df.columns:
+        # Filter for only the next 48 hours
+        planning_df = df[df["is_planning_window"] == True]
+        
+        # Calculate volume by corridor
+        volume_by_corridor = planning_df.groupby("corridor_id").size().to_dict()
+        kpis["volume_by_corridor_48h"] = volume_by_corridor
+        
+        # Now that the IDs are clean, you can calculate the mix!
+        if "item_id" in planning_df.columns:
+            item_mix = planning_df.groupby(["corridor_id", "item_id"]).size().unstack(fill_value=0).to_dict(orient="index")
+            kpis["item_mix_by_corridor"] = item_mix
+        
     numeric_cols = df.select_dtypes(include=[np.number]).columns.tolist()
 
     if numeric_cols:
