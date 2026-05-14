@@ -4,18 +4,19 @@ load_dotenv()
 from tracing import init_langsmith_tracing
 init_langsmith_tracing()
 from graph import build_graph
-
-if __name__ == "__main__":
  
+if __name__ == "__main__":
     app = build_graph()
 
     # Define the scenario you want to test
-    scenario = "A severe driver shortage occurred in corridor A, resulting in 30% fewer available standard trucks. At the same time, we experienced a 20% demand spike."
+    scenario = "We are experiencing a 20% demand spike in Corridor B, but 2 of our temp-controlled trucks broke down today."
 
     state = {
-        "pdf_path": "data/SeeWeeS Specialty distribution.pdf",
-        "csv_path": "data/Incoming_shipment_02_08.csv",
-        "what_if_scenario": scenario, # NEW: Inject scenario here
+        # Assuming you either convert the MD to PDF, or update pdf_tools.py to read text/markdown
+        "pdf_path": "data-for-enhancement/SeeWeeS Specialty Dispatch Playbook.md", 
+        "csv_path": "data-for-enhancement/Incoming_shipments_14d_multi_corridor.csv",
+        "resource_csv_path": "data-for-enhancement/Resource_availability_48h.csv", # NEW
+        "what_if_scenario": scenario,
     }
 
     final = app.invoke(state)
