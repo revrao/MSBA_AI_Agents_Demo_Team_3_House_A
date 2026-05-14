@@ -1,6 +1,6 @@
 # UCLA MSBA AI Agents Project Challenge 2026
 
-## Team [Team Name]
+## Team 3 House A
 
 ### Enhancement 2: What-If Scenario Simulation
 
