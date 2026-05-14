@@ -76,12 +76,13 @@ def node_weather(state: AppState) -> AppState:
 
 
 def node_planner(state: AppState) -> AppState:
-    # NEW: Pass the what-if scenario to the planner
+    # Pass all required variables to the planner, including the new resources
     plan = run_planner_agent(
         business_context=state.get("business_context", ""),
         ops_insights=state.get("ops_insights", ""),
         weather_risk=state.get("weather_risk", {}),
-        what_if_scenario=state.get("what_if_scenario", "No disruptions reported.")
+        what_if_scenario=state.get("what_if_scenario", "No disruptions reported."),
+        resource_constraints=state.get("resource_constraints", "No constraints provided.") # <--- NEW ARGUMENT PASSED
     )
     return {"dispatch_plan": plan}
 
