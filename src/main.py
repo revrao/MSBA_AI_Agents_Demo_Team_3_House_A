@@ -13,7 +13,7 @@ if __name__ == "__main__":
 
     state = {
         # Assuming you either convert the MD to PDF, or update pdf_tools.py to read text/markdown
-        "pdf_path": "data-for-enhancement/SeeWeeS Specialty Dispatch Playbook.md", 
+        "pdf_path": "data-for-enhancement/SeeWeeS Specialty Dispatch Playbook.pdf", 
         "csv_path": "data-for-enhancement/Incoming_shipments_14d_multi_corridor.csv",
         "resource_csv_path": "data-for-enhancement/Resource_availability_48h.csv", # NEW
         "what_if_scenario": scenario,
