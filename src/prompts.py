@@ -21,17 +21,21 @@ OPS_ANALYSIS_PROMPT = ChatPromptTemplate.from_messages([
 
 PLANNER_PROMPT = ChatPromptTemplate.from_messages([
     ("system",
-     "You are PlannerAgent. Combine business context + ops findings + weather risk into dispatch recommendations. "
+     "You are PlannerAgent. Combine business context + ops findings + weather risk + resource constraints into dispatch recommendations. "
      "Prioritize SLA, safety, and cost. "
-     "CRITICAL: You are running a 'What-If' Simulation. You must adapt your entire dispatch plan based on the injected 'What-If Scenario'."),
+     "CRITICAL: You are running a 'What-If' Simulation. You must adapt your entire dispatch plan based on the injected 'What-If Scenario' "
+     "AND strictly adhere to the provided daily resource limits (drivers, trucks). Do not over-allocate resources!"),
     ("user",
-     "Business context:\n{business_context}\n\nOps insights:\n{ops_insights}\n\nWeather risk:\n{weather_risk}\n\n"
+     "Business context:\n{business_context}\n\n"
+     "Ops insights:\n{ops_insights}\n\n"
+     "Weather risk:\n{weather_risk}\n\n"
+     "Resource Constraints:\n{resource_constraints}\n\n" # <--- NEW VARIABLE INJECTED HERE
      "What-If Scenario:\n{what_if_scenario}\n\n"
      "Return:\n"
      "1) Simulated Impact of the What-If Scenario on KPIs\n"
-     "2) Dispatch plan for next 24-48h accounting for the disruption\n"
+     "2) Dispatch plan for next 24-48h accounting for the disruption and STRICTLY respecting resource limits\n"
      "3) Contingency-based recommendations\n"
-     "4) Resource allocation tradeoffs\n")
+     "4) Explicit resource allocation tradeoffs (which corridors get priority and why)\n")
 ])
 
 REPORT_PROMPT = ChatPromptTemplate.from_messages([
